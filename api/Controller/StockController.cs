@@ -6,6 +6,8 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using api.Dtos;
 using api.Models;
+using api.Interfaces;
+using System.Threading.Tasks;
 
 namespace api.Controller
 {
@@ -13,30 +15,31 @@ namespace api.Controller
     [ApiController]
     public class StockController : ControllerBase
 {
-    private readonly DataContext _context;
     private readonly IMapper _mapper;
+    private readonly IStockRepository _stockRepository;
 
-    public StockController(DataContext context, IMapper mapper)
+
+    public StockController( IMapper mapper, IStockRepository stockRepository)
     {
-        _context = context;
         _mapper = mapper;
+        _stockRepository = stockRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
         {
             // Veritabanından veriler gelene kadar bekle (await)
-            var stocks = await _context.Stocks.ToListAsync();
+            var stocks = await _stockRepository.GetAllAsync();
             
             var stockDtos = _mapper.Map<IEnumerable<StockDto>>(stocks);
             
             return Ok(stockDtos);
         }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.Id ==  id);
+        var stock = await _stockRepository.GetByIdAsync(id);
         if (stock == null) return NotFound();
 
         
@@ -48,38 +51,34 @@ namespace api.Controller
         // DTO'dan Stock modeline dönüşüm
         var stock = _mapper.Map<Stock>(request);
         
-        _context.Stocks.AddAsync(stock);
-        await _context.SaveChangesAsync();
+        
+        await _stockRepository.CreateAsync(stock);
         
         // Oluşturulan nesnenin DTO'sunu döndürüyoruz
         return CreatedAtAction(nameof(GetById), new { id = stock.Id }, _mapper.Map<StockDto>(stock));
     }
-    [HttpPut]
-    [Route("{id}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody]UpdateStockRequestDto updateDto)
-    {
-        var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.Id == id); //nesneyı bilmiyorsak dönmesin
-        if (stock == null) return NotFound();
+    [HttpPut("{id:int}")]
+public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
+{
+    // Repository zaten güncellemeyi ve SaveChangesAsync() işlemini içeride yaptı!
+    var stock = await _stockRepository.UpdateAsync(id, updateDto);
+    
+    if (stock == null) return NotFound();
 
-        // DTO'dan Stock modeline dönüşüm
-        _mapper.Map(updateDto, stock);
-        
-        _context.SaveChangesAsync();
-        
-        // Güncellenen nesnenin DTO'sunu döndürüyoruz
-        return Ok(_mapper.Map<StockDto>(stock));
-    }
-    [HttpDelete]
-    [Route("{id}")]
-    public IActionResult Delete([FromRoute] int id)
-    {
-        var stock = _context.Stocks.FirstOrDefault(s => s.Id == id);
-        if (stock == null) return NotFound();
+    
+    return Ok(_mapper.Map<StockDto>(stock));
+}
 
-        _context.Stocks.Remove(stock);
-        _context.SaveChanges();
+[HttpDelete("{id:int}")]
+public async Task<IActionResult> Delete([FromRoute] int id)
+{
+    // Repository zaten bulma, silme ve kaydetme işlemini yaptı
+    var stock = await _stockRepository.DeleteAsync(id);
+    
+    if (stock == null) return NotFound();
 
-        return Ok("Stock deleted successfully.");
-    }
+    // Artık _context.Stocks.Remove veya _context.SaveChanges() yazmana GEREK YOK.
+    return Ok("Stock deleted successfully.");
+}
 }
 }
