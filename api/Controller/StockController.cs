@@ -8,6 +8,7 @@ using api.Dtos;
 using api.Models;
 using api.Interfaces;
 using System.Threading.Tasks;
+using api.Helpers;
 
 namespace api.Controller
 {
@@ -26,19 +27,22 @@ namespace api.Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
-        {
-            // Veritabanından veriler gelene kadar bekle (await)
-            var stocks = await _stockRepository.GetAllAsync();
-            
-            var stockDtos = _mapper.Map<IEnumerable<StockDto>>(stocks);
-            
-            return Ok(stockDtos);
-        }
+   public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+    var stocks = await _stockRepository.GetAllAsync(query);
+    var stockDtos = _mapper.Map<IEnumerable<StockDto>>(stocks);
+
+    return Ok(stockDtos);
+}
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
+        if (!ModelState.IsValid)
+                return BadRequest(ModelState);
         var stock = await _stockRepository.GetByIdAsync(id);
         if (stock == null) return NotFound();
 
@@ -48,6 +52,8 @@ namespace api.Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody]CreateStockRequestDto request)
     {
+        if (!ModelState.IsValid)
+                return BadRequest(ModelState);
         // DTO'dan Stock modeline dönüşüm
         var stock = _mapper.Map<Stock>(request);
         
@@ -60,6 +66,8 @@ namespace api.Controller
     [HttpPut("{id:int}")]
 public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto updateDto)
 {
+    if (!ModelState.IsValid)
+                return BadRequest(ModelState);
     // Repository zaten güncellemeyi ve SaveChangesAsync() işlemini içeride yaptı!
     var stock = await _stockRepository.UpdateAsync(id, updateDto);
     
@@ -72,6 +80,7 @@ public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSto
 [HttpDelete("{id:int}")]
 public async Task<IActionResult> Delete([FromRoute] int id)
 {
+    
     // Repository zaten bulma, silme ve kaydetme işlemini yaptı
     var stock = await _stockRepository.DeleteAsync(id);
     
