@@ -10,22 +10,19 @@ namespace api.Mappers
     {
         public MappingProfiles()
         {
-            // Stock modelinden StockDto'ya dönüşüm yapabilirsin demek.
-            // Property isimleri aynıysa otomatik eşleşir.
-
             CreateMap<Stock, StockDto>();
             CreateMap<StockDto, Stock>();
             CreateMap<StockDto, CreateStockRequestDto>();
             CreateMap<CreateStockRequestDto, Stock>();
             CreateMap<StockDto, UpdateStockRequestDto>();
             CreateMap<UpdateStockRequestDto, Stock>();
+
             CreateMap<Comment, CommentDto>();
             CreateMap<CommentDto, Comment>();
-             
             CreateMap<CreateCommentDto, Comment>();
             CreateMap<UpdateCommentDto, Comment>();
-           
-            
+
+            CreateMap<FMPStock, Stock>();
         }
     }
 }
