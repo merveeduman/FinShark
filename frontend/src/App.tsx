@@ -1,14 +1,18 @@
-import './App.css';
+import { Outlet } from "react-router-dom";
+import Navbar from "./Components/Navbar/Navbar";
+import { ToastContainer } from "react-toastify";
+import { UserProvider } from "./Context/useAuth";
 
-import CardList from './Components/CardList/CardList';
-import Search from './Components/Search/Search';
+import "react-toastify/dist/ReactToastify.css";
+import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <Search />
-      <CardList />
-    </div>
+    <UserProvider>
+      <Navbar />
+      <Outlet />
+      <ToastContainer />
+    </UserProvider>
   );
 }
 
