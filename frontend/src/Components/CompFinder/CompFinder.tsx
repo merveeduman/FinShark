@@ -12,7 +12,7 @@ const CompFinder = ({ ticker }: Props) => {
   useEffect(() => {
     const getComps = async () => {
       const value = await getCompData(ticker);
-      setCompanyData(value?.data[0]);
+      setCompanyData(value?.[0]);
     };
     getComps();
   }, [ticker]);

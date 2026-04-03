@@ -58,7 +58,7 @@ const CashflowStatement = (props: Props) => {
   useEffect(() => {
     const getRatios = async () => {
       const result = await getCashFlow(ticker);
-      setCashFlowData(result!.data);
+      setCashFlowData(result ?? []);
     };
     getRatios();
   }, []);

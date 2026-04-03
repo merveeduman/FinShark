@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CompanyProfile } from "../../company";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getCompanyProfile } from "../../api";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import CompanyDashboard from "../../Components/CompanyDashboard/CompanyDashboard";
@@ -19,10 +19,11 @@ const CompanyPage = (props: Props) => {
   useEffect(() => {
     const getProfileInit = async () => {
       const result = await getCompanyProfile(ticker!);
-      setCompany(result?.data[0]);
+      setCompany(result?.[0]);
     };
+
     getProfileInit();
-  }, []);
+  }, [ticker]);
 
   return (
     <>

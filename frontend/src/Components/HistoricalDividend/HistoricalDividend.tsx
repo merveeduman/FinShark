@@ -15,7 +15,7 @@ const HistoricalDividend = (props: Props) => {
     const fetchHistoricalDividend = async () => {
       const value = await getHistoricalDividend(ticker);
       setDividend(
-        value?.data.historical.slice(0, 18).sort(function (a, b) {
+        value?.historical.slice(0, 18).sort(function (a: Dividend, b: Dividend) {
           var c = new Date(a.date);
           var d = new Date(b.date);
           return c.getTime() - d.getTime();

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, SyntheticEvent, FormEvent } from "react";
+import React, { ChangeEvent, SyntheticEvent } from "react";
 
 interface Props {
   onSearchSubmit: (e: SyntheticEvent) => void;
@@ -19,12 +19,20 @@ const Search: React.FC<Props> = ({
           onSubmit={onSearchSubmit}
         >
           <input
+            type="text"
             className="flex-1 p-3 border-2 rounded-lg placeholder-black focus:outline-none"
             id="search-input"
             placeholder="Search companies"
             value={search}
             onChange={handleSearchChange}
-          ></input>
+          />
+
+          <button
+            type="submit"
+            className="p-3 text-white bg-teal-500 rounded-lg hover:bg-teal-600"
+          >
+            Search
+          </button>
         </form>
       </div>
     </section>

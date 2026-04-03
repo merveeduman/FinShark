@@ -13,7 +13,7 @@ const TenKFinder = ({ ticker }: Props) => {
   useEffect(() => {
     const getTenKData = async () => {
       const value = await getTenK(ticker);
-      setCompanyData(value?.data);
+      setCompanyData(value ?? []);
     };
     getTenKData();
   }, [ticker]);

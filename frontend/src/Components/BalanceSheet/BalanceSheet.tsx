@@ -86,7 +86,7 @@ const BalanceSheet = (props: Props) => {
   useEffect(() => {
     const getCompanyData = async () => {
       const value = await getBalanceSheet(ticker!);
-      setCompanyData(value?.data[0]);
+      setCompanyData(value?.[0]);
     };
     getCompanyData();
   }, []);
