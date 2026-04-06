@@ -1,4 +1,4 @@
-# 🦈 FinShark - Stock & Portfolio Management App
+# FinShark - Stock & Portfolio Management App
 
 ---
 
