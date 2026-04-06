@@ -25,9 +25,19 @@ namespace api.Service
         {
             try
             {
-                var result = await _httpClient.GetAsync(
-                    $"https://financialmodelingprep.com/api/v3/profile/{symbol}?apikey={_config["FMPKey"]}"
-                );
+                if (string.IsNullOrWhiteSpace(symbol))
+                    return null;
+
+                var apiKey = _config["FMPKey"];
+                if (string.IsNullOrWhiteSpace(apiKey))
+                    return null;
+
+                var cleanSymbol = symbol.Trim().ToUpper();
+
+                var url =
+                    $"https://financialmodelingprep.com/stable/profile?symbol={Uri.EscapeDataString(cleanSymbol)}&apikey={apiKey}";
+
+                var result = await _httpClient.GetAsync(url);
 
                 if (!result.IsSuccessStatusCode)
                     return null;

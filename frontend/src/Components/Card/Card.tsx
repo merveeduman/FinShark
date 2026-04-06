@@ -1,4 +1,4 @@
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import "./Card.css";
 import { CompanySearch } from "../../company";
@@ -7,13 +7,15 @@ import AddPortfolio from "../Portfolio/AddPortfolio/AddPortfolio";
 interface Props {
   id: string;
   searchResult: CompanySearch;
-  onPortfolioCreate: (e: SyntheticEvent) => void;
+  onPortfolioCreate: (symbol: string) => void;
+  isInPortfolio: boolean;
 }
 
 const Card: React.FC<Props> = ({
   id,
   searchResult,
   onPortfolioCreate,
+  isInPortfolio,
 }: Props): JSX.Element => {
   return (
     <div
@@ -27,14 +29,21 @@ const Card: React.FC<Props> = ({
       >
         {searchResult.name} ({searchResult.symbol})
       </Link>
+
       <p className="text-veryDarkBlue">{searchResult.currency}</p>
+
       <p className="font-bold text-veryDarkBlue">
-        {searchResult.exchangeShortName} - {searchResult.stockExchange}
+        {searchResult.exchangeShortName ?? "-"} - {searchResult.stockExchange ?? "-"}
       </p>
-      <AddPortfolio
-        onPortfolioCreate={onPortfolioCreate}
-        symbol={searchResult.symbol}
-      />
+
+      {!isInPortfolio ? (
+        <AddPortfolio
+          onPortfolioCreate={onPortfolioCreate}
+          symbol={searchResult.symbol}
+        />
+      ) : (
+        <span className="text-green-600 font-bold">Added</span>
+      )}
     </div>
   );
 };

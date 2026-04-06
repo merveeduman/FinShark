@@ -10,11 +10,13 @@ import {
   CompanyTenK,
   CompanyHistoricalDividend,
 } from "./company";
-
 export const searchCompanies = async (query: string) => {
   try {
+    console.log("QUERY:", query);
+    console.log("API KEY:", process.env.REACT_APP_API_KEY);
+
     const response = await axios.get<CompanySearch[]>(
-      `https://financialmodelingprep.com/api/v3/search?query=${query}&limit=10&exchange=NASDAQ&apikey=${process.env.REACT_APP_API_KEY}`
+      `https://financialmodelingprep.com/stable/search-symbol?query=${query}&apikey=${process.env.REACT_APP_API_KEY}`
     );
 
     console.log("SEARCH API DATA:", response.data);
@@ -22,6 +24,7 @@ export const searchCompanies = async (query: string) => {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log("error message:", error.message);
+      console.log("error response:", error.response);
       return error.message;
     } else {
       console.log("unexpected error:", error);

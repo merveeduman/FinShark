@@ -1,27 +1,39 @@
-import React, { SyntheticEvent } from "react";
+import React from "react";
 import Card from "../Card/Card";
 import { CompanySearch } from "../../company";
 import { v4 as uuidv4 } from "uuid";
+import { PortfolioGet } from "../../Models/Portfolio";
 
 interface Props {
   searchResults: CompanySearch[];
-  onPortfolioCreate: (e: SyntheticEvent) => void;
+  onPortfolioCreate: (symbol: string) => void;
+  portfolioValues: PortfolioGet[];
 }
 
 const CardList: React.FC<Props> = ({
   searchResults,
   onPortfolioCreate,
+  portfolioValues,
 }: Props): JSX.Element => {
+  const filteredResults = searchResults.filter(
+    (result) => result.symbol && !result.symbol.includes(".")
+  );
+
   return (
     <div>
-      {searchResults.length > 0 ? (
-        searchResults.map((result) => {
+      {filteredResults.length > 0 ? (
+        filteredResults.map((result) => {
+          const exists = portfolioValues.some(
+            (p) => p.symbol === result.symbol
+          );
+
           return (
             <Card
               id={result.symbol}
               key={uuidv4()}
               searchResult={result}
               onPortfolioCreate={onPortfolioCreate}
+              isInPortfolio={exists}
             />
           );
         })
